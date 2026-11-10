@@ -1,0 +1,947 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Valle Viejo Olmos — Riego Inteligente</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500&display=swap">
+
+<style>
+/* ── TOKENS ──────────────────────────────────────────────────────────── */
+/* Layout: single-page sectioned scroll with sticky nav, full-bleed hero */
+:root {
+  --bg:        #F7F9F6;
+  --bg-alt:    #EEF4EB;
+  --bg-card:   #FFFFFF;
+  --fg:        #1A2515;
+  --fg-muted:  #4A5E42;
+  --fg-subtle: #7D917A;
+  --accent:    #2D6A4F;
+  --accent-hi: #40916C;
+  --accent-lo: #D8EDDF;
+  --gold:      #B7791F;
+  --gold-lo:   #FEF3C7;
+  --danger:    #C53030;
+  --danger-lo: #FEE2E2;
+  --warn:      #D97706;
+  --warn-lo:   #FFFBEB;
+  --border:    #D1E0CB;
+  --shadow:    0 2px 12px rgba(45,106,79,.10);
+  --shadow-lg: 0 8px 32px rgba(45,106,79,.14);
+  --r:         10px;
+  --font-head: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #0F1A0E;
+    --bg-alt:    #172013;
+    --bg-card:   #1D2B1A;
+    --fg:        #E8F2E5;
+    --fg-muted:  #9DC49A;
+    --fg-subtle: #638960;
+    --accent:    #52B788;
+    --accent-hi: #74C69D;
+    --accent-lo: #1D3A28;
+    --gold:      #F6C85F;
+    --gold-lo:   #2D2007;
+    --danger:    #FC8181;
+    --danger-lo: #3B1515;
+    --warn:      #FBD38D;
+    --warn-lo:   #2D1E05;
+    --border:    #2A3D26;
+    --shadow:    0 2px 12px rgba(0,0,0,.35);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0F1A0E; --bg-alt:#172013; --bg-card:#1D2B1A; --fg:#E8F2E5;
+  --fg-muted:#9DC49A; --fg-subtle:#638960; --accent:#52B788; --accent-hi:#74C69D;
+  --accent-lo:#1D3A28; --gold:#F6C85F; --gold-lo:#2D2007; --danger:#FC8181;
+  --danger-lo:#3B1515; --warn:#FBD38D; --warn-lo:#2D1E05; --border:#2A3D26;
+  --shadow:0 2px 12px rgba(0,0,0,.35); --shadow-lg:0 8px 32px rgba(0,0,0,.45);
+  color-scheme: dark;
+}
+
+/* ── RESET / BASE ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  padding-left: max(0px, env(safe-area-inset-left,0px));
+  padding-right: max(0px, env(safe-area-inset-right,0px));
+  overflow-x: hidden;
+}
+h1,h2,h3,h4,h5 { font-family: var(--font-head); text-wrap: balance; }
+img { max-width: 100%; display: block; }
+a { color: var(--accent); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+
+/* ── STICKY NAV ───────────────────────────────────────────────────────── */
+#nav {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 100;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px max(16px, env(safe-area-inset-left,0px));
+  padding-right: max(16px, env(safe-area-inset-right,0px));
+}
+.nav-logo { font-family: var(--font-head); font-weight: 700; font-size: 14px; color: var(--accent); letter-spacing: -.3px; }
+.nav-logo span { color: var(--fg-muted); font-weight: 400; }
+.nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav-links button {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font-body); font-size: 12px; font-weight: 500;
+  color: var(--fg-muted); padding: 5px 10px; border-radius: 6px;
+  transition: background .15s, color .15s;
+}
+.nav-links button:hover, .nav-links button.active {
+  background: var(--accent-lo); color: var(--accent);
+}
+.theme-btn {
+  background: none; border: 1px solid var(--border); border-radius: 6px;
+  cursor: pointer; padding: 5px 8px; font-size: 14px; color: var(--fg-muted);
+  transition: background .15s;
+}
+.theme-btn:hover { background: var(--accent-lo); }
+
+/* ── SECTION SHELL ────────────────────────────────────────────────────── */
+section {
+  padding-block: 72px;
+  padding-left: max(16px, env(safe-area-inset-left,0px));
+  padding-right: max(16px, env(safe-area-inset-right,0px));
+}
+section:nth-child(even) { background: var(--bg-alt); }
+.inner { max-width: 1060px; margin: 0 auto; }
+
+.section-eyebrow {
+  font-family: var(--font-head); font-size: 11px; font-weight: 600;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: 8px;
+}
+.section-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  font-weight: 700; color: var(--fg); line-height: 1.18;
+  margin-bottom: 16px;
+}
+.section-lead {
+  font-size: 16px; color: var(--fg-muted); max-width: 640px;
+  margin-bottom: 44px; line-height: 1.7;
+}
+
+/* ── HERO ─────────────────────────────────────────────────────────────── */
+#hero {
+  padding-block: 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+.hero-inner {
+  max-width: 1060px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 420px; gap: 48px; align-items: center;
+  min-height: 520px;
+  padding: 80px max(16px, env(safe-area-inset-left,0px));
+  padding-right: max(16px, env(safe-area-inset-right,0px));
+}
+.hero-kicker {
+  font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hero-kicker::before {
+  content: ''; display: inline-block; width: 28px; height: 2px;
+  background: var(--accent);
+}
+.hero-h1 {
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 700; line-height: 1.1; color: var(--fg); margin-bottom: 20px;
+}
+.hero-h1 em { font-style: normal; color: var(--accent); }
+.hero-lead {
+  font-size: 16px; color: var(--fg-muted); line-height: 1.72; margin-bottom: 36px;
+  max-width: 520px;
+}
+.hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+.badge {
+  font-family: var(--font-head); font-size: 11px; font-weight: 600;
+  letter-spacing: .06em; padding: 5px 12px; border-radius: 999px;
+  background: var(--accent-lo); color: var(--accent);
+  border: 1px solid var(--border);
+}
+.badge.gold { background: var(--gold-lo); color: var(--gold); border-color: transparent; }
+.hero-stats {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+  background: var(--border); border-radius: var(--r); overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+.stat-cell {
+  background: var(--bg-card); padding: 20px 22px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.stat-cell:first-child { border-radius: var(--r) 0 0 0; }
+.stat-cell:nth-child(2) { border-radius: 0 var(--r) 0 0; }
+.stat-cell:nth-child(3) { border-radius: 0 0 0 var(--r); }
+.stat-cell:last-child { border-radius: 0 0 var(--r) 0; }
+.stat-num {
+  font-family: var(--font-head); font-size: 2rem; font-weight: 700;
+  color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums;
+}
+.stat-num.gold { color: var(--gold); }
+.stat-label { font-size: 11px; color: var(--fg-subtle); font-weight: 500; }
+.stat-desc { font-size: 12px; color: var(--fg-muted); line-height: 1.4; }
+
+@media (max-width: 720px) {
+  .hero-inner { grid-template-columns: 1fr; min-height: auto; gap: 32px; }
+  .hero-stats { order: -1; }
+}
+
+/* ── DIAGNÓSTICO ──────────────────────────────────────────────────────── */
+.charts-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px; margin-bottom: 32px;
+}
+.chart-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 24px; box-shadow: var(--shadow);
+}
+.chart-title { font-family: var(--font-head); font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--fg); }
+.chart-sub { font-size: 11px; color: var(--fg-subtle); margin-bottom: 20px; }
+svg text { font-family: var(--font-body); fill: var(--fg-muted); }
+
+/* Map card */
+.map-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow);
+  margin-top: 24px;
+}
+.map-header { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.map-header h3 { font-family: var(--font-head); font-size: 15px; font-weight: 600; }
+.map-header p { font-size: 12px; color: var(--fg-muted); margin-top: 4px; }
+.map-body { padding: 24px; }
+.map-svg-wrap { overflow-x: auto; }
+.map-legend { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--fg-muted); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* incident table */
+.incident-wrap { overflow-x: auto; margin-top: 24px; border-radius: var(--r); border: 1px solid var(--border); }
+.incident-table { width: 100%; border-collapse: collapse; min-width: 640px; }
+.incident-table th {
+  background: var(--accent); color: #fff; font-family: var(--font-head);
+  font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+  padding: 10px 14px; text-align: left;
+}
+.incident-table td { padding: 10px 14px; font-size: 12px; border-bottom: 1px solid var(--border); }
+.incident-table tr:last-child td { border-bottom: none; }
+.incident-table tr:nth-child(even) td { background: var(--bg-alt); }
+.status-pill {
+  display: inline-block; padding: 2px 10px; border-radius: 999px;
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
+}
+.s-open { background: var(--danger-lo); color: var(--danger); }
+.s-proc { background: var(--warn-lo); color: var(--warn); }
+.s-closed { background: var(--accent-lo); color: var(--accent); }
+
+/* ── ARQUITECTURA ─────────────────────────────────────────────────────── */
+.arch-flow {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 32px 24px;
+  box-shadow: var(--shadow); overflow-x: auto;
+}
+.arch-layers {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; flex-wrap: nowrap; min-width: 680px;
+}
+.arch-node {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  gap: 10px; text-align: center; position: relative; min-width: 0;
+}
+.arch-node::after {
+  content: '→';
+  position: absolute; right: -16px; top: 50%; transform: translateY(-50%);
+  font-size: 20px; color: var(--accent-hi); font-weight: 700;
+  pointer-events: none;
+}
+.arch-node:last-child::after { display: none; }
+.arch-icon {
+  width: 64px; height: 64px; border-radius: 16px;
+  background: var(--accent); display: flex; align-items: center; justify-content: center;
+  font-size: 28px; box-shadow: var(--shadow);
+  flex-shrink: 0;
+}
+.arch-icon.gold { background: var(--gold); }
+.arch-icon.teal { background: #0E7490; }
+.arch-icon.purple { background: #6D28D9; }
+.arch-icon.green2 { background: #065F46; }
+.arch-node-title { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--fg); }
+.arch-node-desc { font-size: 11px; color: var(--fg-subtle); line-height: 1.4; max-width: 110px; }
+.arch-detail {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px; margin-top: 32px;
+}
+.arch-detail-card {
+  background: var(--bg-alt); border-radius: 8px; padding: 16px;
+  border-left: 3px solid var(--accent);
+}
+.arch-detail-card h4 { font-family: var(--font-head); font-size: 12px; font-weight: 700; margin-bottom: 6px; color: var(--accent); }
+.arch-detail-card ul { list-style: none; }
+.arch-detail-card ul li { font-size: 11px; color: var(--fg-muted); padding: 2px 0; }
+.arch-detail-card ul li::before { content: '· '; color: var(--accent); font-weight: 700; }
+
+/* ── ECONOMÍA CIRCULAR ────────────────────────────────────────────────── */
+.eco-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 24px; align-items: start;
+}
+.eco-cycle {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 28px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; align-items: center; overflow: hidden;
+}
+.eco-stages { display: flex; flex-direction: column; gap: 0; width: 100%; }
+.eco-stage {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 14px 0; position: relative;
+}
+.eco-stage:not(:last-child)::after {
+  content: ''; position: absolute;
+  left: 19px; top: 52px; width: 2px; height: calc(100% - 14px);
+  background: var(--border);
+}
+.eco-dot {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px; z-index: 1;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+}
+.eco-stage-body h4 { font-family: var(--font-head); font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.eco-stage-body p { font-size: 12px; color: var(--fg-muted); line-height: 1.5; }
+.eco-side { display: flex; flex-direction: column; gap: 16px; }
+.eco-metric {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 20px; box-shadow: var(--shadow);
+}
+.eco-metric-num {
+  font-family: var(--font-head); font-size: 2.2rem; font-weight: 700;
+  color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums;
+  margin-bottom: 4px;
+}
+.eco-metric-num.gold { color: var(--gold); }
+.eco-metric-label { font-size: 12px; color: var(--fg-muted); line-height: 1.4; }
+.eco-cert {
+  background: var(--accent-lo); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.eco-cert-icon { font-size: 24px; }
+.eco-cert p { font-size: 12px; color: var(--fg-muted); }
+.eco-cert strong { color: var(--fg); display: block; font-family: var(--font-head); font-size: 13px; margin-bottom: 2px; }
+
+@media (max-width: 680px) {
+  .eco-grid { grid-template-columns: 1fr; }
+}
+
+/* ── REFERENCIAS ──────────────────────────────────────────────────────── */
+.ref-list { display: flex; flex-direction: column; gap: 2px; }
+.ref-item {
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+  font-size: 13px; color: var(--fg-muted); line-height: 1.6;
+}
+.ref-item:last-child { border-bottom: none; }
+.ref-item a { color: var(--accent); word-break: break-all; }
+.ref-item em { color: var(--fg-subtle); font-style: italic; }
+
+/* ── FOOTER ───────────────────────────────────────────────────────────── */
+footer {
+  background: var(--fg); color: var(--bg-alt); text-align: center;
+  padding: 28px max(16px, env(safe-area-inset-left,0px));
+  font-size: 12px;
+}
+footer strong { color: var(--accent-lo); }
+
+/* ── UTILITY ──────────────────────────────────────────────────────────── */
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 4px;
+  background: var(--accent-lo); color: var(--accent);
+}
+.tag.danger { background: var(--danger-lo); color: var(--danger); }
+.tag.gold { background: var(--gold-lo); color: var(--gold); }
+</style>
+
+<!-- NAV -->
+<nav id="nav" role="navigation" aria-label="Secciones del portafolio">
+  <div class="nav-inner">
+    <div class="nav-logo">Valle Viejo Olmos <span>· Riego Inteligente</span></div>
+    <div class="nav-links" id="navLinks">
+      <button onclick="scrollTo('hero')">Inicio</button>
+      <button onclick="scrollTo('diagnostico')">Diagnóstico</button>
+      <button onclick="scrollTo('arquitectura')">Tecnología</button>
+      <button onclick="scrollTo('economia')">Economía Circular</button>
+      <button onclick="scrollTo('referencias')">Referencias</button>
+    </div>
+    <button class="theme-btn" id="themeBtn" aria-label="Cambiar tema">🌓</button>
+  </div>
+</nav>
+
+<!-- A. INICIO / HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-kicker">Portafolio Digital Ejecutivo · Irrigación Olmos</div>
+      <h1 class="hero-h1">Agua, datos y confianza<br>para el <em>banano orgánico</em><br>del norte del Perú</h1>
+      <p class="hero-lead">El Valle Viejo de Olmos produce banano orgánico certificado con destino a Europa, EE. UU. y Asia. Sin embargo, el 25–40 % del agua se pierde antes de llegar a la planta, las decisiones de riego se toman a ciegas y diez incidentes documentados de sustracción clandestina generan conflictos hídricos crecientes. Este proyecto propone sensores IoT, inteligencia artificial y blockchain para transformar esa realidad en una ventaja competitiva verificable.</p>
+      <div class="hero-badges">
+        <span class="badge">🌿 Banano Orgánico Certificado</span>
+        <span class="badge">📡 LoRaWAN IoT</span>
+        <span class="badge">🔗 Hyperledger Fabric</span>
+        <span class="badge gold">🌍 Exportación a 4 mercados</span>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-cell">
+        <span class="stat-num">313.5</span>
+        <span class="stat-label">Hectáreas en intervención</span>
+        <span class="stat-desc">8 asociaciones en 4 bloques activos</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">−30%</span>
+        <span class="stat-label">Meta de reducción hídrica</span>
+        <span class="stat-desc">Sobre consumo real medido en Fase 1</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">−15%</span>
+        <span class="stat-label">Meta ahorro energético</span>
+        <span class="stat-desc">En sistemas de bombeo agrícola</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num gold">76%</span>
+        <span class="stat-label">Área con exportación directa</span>
+        <span class="stat-desc">239 ha con trazabilidad certificable</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- B. DIAGNÓSTICO SITUACIONAL -->
+<section id="diagnostico">
+  <div class="inner">
+    <div class="section-eyebrow">B · Diagnóstico Situacional</div>
+    <h2 class="section-title">Los números que justifican la intervención</h2>
+    <p class="section-lead">Datos reales del sistema Olmos y del área de intervención, levantados en campo durante 2023–2024.</p>
+
+    <div class="charts-grid">
+      <!-- Gráfico 1: Brecha hídrica -->
+      <div class="chart-card">
+        <div class="chart-title">Brecha hídrica: necesidad vs. dotación oficial</div>
+        <div class="chart-sub">m³/ha/año — Banano orgánico en Valle Viejo</div>
+        <svg viewBox="0 0 280 160" width="100%" aria-label="Gráfico de brecha hídrica">
+          <!-- ejes -->
+          <line x1="40" y1="10" x2="40" y2="130" stroke="var(--border)" stroke-width="1"/>
+          <line x1="40" y1="130" x2="275" y2="130" stroke="var(--border)" stroke-width="1"/>
+          <!-- ticks Y -->
+          <text x="34" y="133" font-size="9" text-anchor="end" fill="var(--fg-subtle)">0</text>
+          <text x="34" y="99" font-size="9" text-anchor="end" fill="var(--fg-subtle)">7K</text>
+          <text x="34" y="65" font-size="9" text-anchor="end" fill="var(--fg-subtle)">14K</text>
+          <text x="34" y="31" font-size="9" text-anchor="end" fill="var(--fg-subtle)">22K</text>
+          <line x1="40" y1="98" x2="275" y2="98" stroke="var(--border)" stroke-width=".5" stroke-dasharray="3"/>
+          <line x1="40" y1="64" x2="275" y2="64" stroke="var(--border)" stroke-width=".5" stroke-dasharray="3"/>
+          <!-- barra dotación oficial 7000 -->
+          <rect x="60" y="98" width="50" height="32" fill="var(--accent)" rx="3"/>
+          <text x="85" y="93" font-size="9" text-anchor="middle" fill="var(--accent)" font-weight="600">7 000</text>
+          <text x="85" y="145" font-size="9" text-anchor="middle" fill="var(--fg-subtle)">Dotación oficial</text>
+          <!-- barra necesidad mínima 12000 -->
+          <rect x="130" y="64" width="50" height="66" fill="var(--warn)" rx="3" opacity=".85"/>
+          <text x="155" y="59" font-size="9" text-anchor="middle" fill="var(--warn)" font-weight="600">12 000</text>
+          <text x="155" y="145" font-size="9" text-anchor="middle" fill="var(--fg-subtle)">Necesidad mín.</text>
+          <!-- barra necesidad máxima 22000 -->
+          <rect x="200" y="23" width="50" height="107" fill="var(--danger)" rx="3" opacity=".75"/>
+          <text x="225" y="18" font-size="9" text-anchor="middle" fill="var(--danger)" font-weight="600">22 000</text>
+          <text x="225" y="145" font-size="9" text-anchor="middle" fill="var(--fg-subtle)">Necesidad máx.</text>
+          <!-- flecha brecha -->
+          <line x1="110" y1="98" x2="130" y2="98" stroke="var(--danger)" stroke-width="1.5" marker-end="url(#arr)"/>
+          <defs>
+            <marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 Z" fill="var(--danger)"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+
+      <!-- Gráfico 2: Pérdidas canal -->
+      <div class="chart-card">
+        <div class="chart-title">Pérdidas estimadas en canal de tierra</div>
+        <div class="chart-sub">% del caudal conducido — sistema actual sin revestimiento</div>
+        <svg viewBox="0 0 280 160" width="100%" aria-label="Gráfico de pérdidas en canal">
+          <!-- Donut SVG manual -->
+          <!-- total 100%, perdido 32.5% (punto medio), llegado 67.5% -->
+          <!-- radio 55, cx 140, cy 90 -->
+          <circle cx="140" cy="85" r="55" fill="none" stroke="var(--accent)" stroke-width="22" opacity=".25"/>
+          <!-- arco llegado 67.5% = 242.7 de 360 -->
+          <circle cx="140" cy="85" r="55" fill="none" stroke="var(--accent)" stroke-width="22"
+            stroke-dasharray="231.4 114.5" stroke-dashoffset="57.5" stroke-linecap="round"/>
+          <!-- arco perdido 32.5% -->
+          <circle cx="140" cy="85" r="55" fill="none" stroke="var(--danger)" stroke-width="22" opacity=".8"
+            stroke-dasharray="111.5 234.4" stroke-dashoffset="-174" stroke-linecap="round"/>
+          <text x="140" y="80" font-size="18" text-anchor="middle" font-weight="700" fill="var(--danger)">25–40%</text>
+          <text x="140" y="96" font-size="10" text-anchor="middle" fill="var(--fg-subtle)">se pierde</text>
+          <!-- leyenda -->
+          <rect x="40" y="152" width="10" height="10" rx="2" fill="var(--accent)"/>
+          <text x="54" y="161" font-size="9" fill="var(--fg-muted)">Llega al cultivo (60–75%)</text>
+          <rect x="162" y="152" width="10" height="10" rx="2" fill="var(--danger)"/>
+          <text x="176" y="161" font-size="9" fill="var(--fg-muted)">Pérdida (25–40%)</text>
+        </svg>
+      </div>
+
+      <!-- Gráfico 3: Incidentes por mes -->
+      <div class="chart-card">
+        <div class="chart-title">Incidentes de sustracción documentados</div>
+        <div class="chart-sub">Expedientes LS_R_AGUA — Canal principal Bloque 04 (2023–2024)</div>
+        <svg viewBox="0 0 280 160" width="100%" aria-label="Gráfico de incidentes por mes">
+          <line x1="36" y1="10" x2="36" y2="118" stroke="var(--border)" stroke-width="1"/>
+          <line x1="36" y1="118" x2="276" y2="118" stroke="var(--border)" stroke-width="1"/>
+          <!-- barras: Abr23=2, May23=1, Jun23=1, Jul23=1, Sep23=1, Oct23=1, Nov23=1, Feb24=2, Abr24=1, Jun24=1, Ago24=1 — agrupado por bimestre -->
+          <!-- x positions for months (simplified): Apr,May,Jun,Jul,Sep,Oct,Nov,Feb24,Apr24,Jun24,Aug24 -->
+          <text x="34" y="121" font-size="8" text-anchor="end" fill="var(--fg-subtle)">0</text>
+          <text x="34" y="85" font-size="8" text-anchor="end" fill="var(--fg-subtle)">1</text>
+          <text x="34" y="49" font-size="8" text-anchor="end" fill="var(--fg-subtle)">2</text>
+          <line x1="36" y1="84" x2="276" y2="84" stroke="var(--border)" stroke-width=".5" stroke-dasharray="3"/>
+          <!-- months simplified -->
+          <!-- Abr 2023 (2 incidentes) -->
+          <rect x="44" y="49" width="17" height="69" fill="var(--danger)" rx="2" opacity=".8"/>
+          <text x="52" y="134" font-size="7" text-anchor="middle" fill="var(--fg-subtle)">Abr 23</text>
+          <!-- May 2023 (1) -->
+          <rect x="68" y="84" width="17" height="34" fill="var(--warn)" rx="2" opacity=".8"/>
+          <text x="76" y="134" font-size="7" text-anchor="middle" fill="var(--fg-subtle)">May 23</text>
+          <!-- Jun 2023 (1) -->
+          <rect x="92" y="84" width="17" height="34" fill="var(--warn)" rx="2" opacity=".8"/>
+          <text x="100" y="134" font-size="7" text-anchor="middle" fill="var(--fg-subtle)">Jun 23</text>
+          <!-- Jul 2023 (1) -->
+          <rect x="116" y="84" width="17" height="34" fill="var(--warn)" rx="2" opacity=".8"/>
+          <text x="124" y="134" font-size="7" text-anchor="middle" fill="var(--fg-subtle)">Jul 23</text>
+          <!-- Sep-Nov 2023 (3) -->
+          <rect x="140" y="15" width="17" height="103" fill="var(--danger)" rx="2" opacity=".8"/>
+          <text x="148" y="134" font-size="7" text-anchor="middle" fill="var(--fg-subtle)">Sep–Nov</text>
+          <!-- Feb 2024 (2) -->
+          <rect x="164" y="49" width="17" height="69" fill="var(--danger)" rx="2" opacity=".8"/>
+          <text x="172" y="134" font-size="7" text-anchor="middle" fill="var(--fg-subtle)">Feb 24</text>
+          <!-- Abr 2024 (1) -->
+          <rect x="188" y="84" width="17" height="34" fill="var(--warn)" rx="2" opacity=".8"/>
+          <text x="196" y="134" font-size="7" text-anchor="middle" fill="var(--fg-subtle)">Abr 24</text>
+          <!-- Jun 2024 (1) -->
+          <rect x="212" y="84" width="17" height="34" fill="var(--danger)" rx="2" opacity=".8"/>
+          <text x="220" y="134" font-size="7" text-anchor="middle" fill="var(--fg-subtle)">Jun 24</text>
+          <!-- Ago 2024 (1) -->
+          <rect x="236" y="84" width="17" height="34" fill="var(--danger)" rx="2" opacity=".8"/>
+          <text x="244" y="134" font-size="7" text-anchor="middle" fill="var(--fg-subtle)">Ago 24</text>
+          <!-- trend line -->
+          <polyline points="52,84 76,101 100,101 124,101 148,49 172,84 196,101 220,84 244,84"
+            fill="none" stroke="var(--fg)" stroke-width="1" stroke-dasharray="3" opacity=".35"/>
+        </svg>
+      </div>
+
+      <!-- Gráfico 4: Destinos exportación -->
+      <div class="chart-card">
+        <div class="chart-title">Destinos de exportación — 8 asociaciones</div>
+        <div class="chart-sub">Por hectáreas comprometidas con cada mercado</div>
+        <svg viewBox="0 0 280 160" width="100%" aria-label="Gráfico de destinos de exportación">
+          <!-- Horizontal bars -->
+          <text x="36" y="118" font-size="9" text-anchor="end" fill="var(--fg-subtle)">0</text>
+          <line x1="36" y1="10" x2="36" y2="118" stroke="var(--border)" stroke-width="1"/>
+          <line x1="36" y1="118" x2="276" y2="118" stroke="var(--border)" stroke-width="1"/>
+          <!-- Alemania/Suiza: 160 ha — bar width proportional out of 160 max = 220px range -->
+          <rect x="40" y="20" width="220" height="20" fill="var(--accent)" rx="3"/>
+          <text x="264" y="34" font-size="9" fill="var(--fg-muted)" text-anchor="end">160 ha</text>
+          <text x="38" y="34" font-size="9" fill="white" font-weight="600">Alemania / Suiza</text>
+          <!-- Europa Los Ángeles+Fruit+Asprorra: 43+27+17=87 ha -->
+          <rect x="40" y="48" width="120" height="20" fill="var(--gold)" rx="3" opacity=".9"/>
+          <text x="164" y="62" font-size="9" fill="var(--fg-muted)">87 ha</text>
+          <text x="38" y="62" font-size="9" fill="white" font-weight="600">Europa (3 ops.)</text>
+          <!-- EE.UU. 21 ha -->
+          <rect x="40" y="76" width="29" height="20" fill="#0E7490" rx="3" opacity=".9"/>
+          <text x="73" y="90" font-size="9" fill="var(--fg-muted)">21 ha</text>
+          <text x="38" y="90" font-size="9" fill="white" font-weight="600">EE. UU.</text>
+          <!-- Nacional: 8.5+12=20.5 ha -->
+          <rect x="40" y="104" width="28" height="20" fill="var(--fg-subtle)" rx="3" opacity=".7"/>
+          <text x="72" y="118" font-size="9" fill="var(--fg-muted)">20.5 ha</text>
+          <text x="38" y="118" font-size="9" fill="white" font-weight="600">Mercado Nac.</text>
+          <!-- label total -->
+          <text x="275" y="20" font-size="8" fill="var(--fg-subtle)" text-anchor="end">313.5 ha total</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Mapa SVG del área -->
+    <div class="map-card">
+      <div class="map-header">
+        <h3>Mapa de bloques de riego — Valle Viejo de Olmos</h3>
+        <p>Sistema de irrigación Olmos · Canal principal y bloques de intervención del proyecto</p>
+      </div>
+      <div class="map-body">
+        <div class="map-svg-wrap">
+          <svg viewBox="0 0 700 340" width="100%" style="min-width:480px" aria-label="Mapa esquemático del Valle Viejo de Olmos">
+            <!-- fondo terreno -->
+            <rect width="700" height="340" fill="var(--bg-alt)" rx="8"/>
+            <!-- Canal principal — línea de agua azul -->
+            <path d="M20,170 C80,165 140,155 200,160 C260,165 300,180 360,170 C420,160 480,155 540,165 C580,170 620,175 680,172"
+              fill="none" stroke="#2563EB" stroke-width="4" stroke-linecap="round"/>
+            <text x="350" y="145" font-size="11" fill="#2563EB" font-weight="600" font-family="'Space Grotesk',sans-serif">Canal Principal</text>
+            <!-- KM markers críticos -->
+            <circle cx="210" cy="160" r="5" fill="#2563EB" opacity=".6"/>
+            <text x="208" y="152" font-size="8" fill="#2563EB" text-anchor="middle">KM 7+300</text>
+            <circle cx="290" cy="168" r="5" fill="#2563EB" opacity=".6"/>
+            <text x="288" y="160" font-size="8" fill="#2563EB" text-anchor="middle">KM 9+500</text>
+            <!-- zona crítica incidentes -->
+            <rect x="200" y="150" width="100" height="30" rx="6"
+              fill="var(--danger)" opacity=".12" stroke="var(--danger)" stroke-width="1" stroke-dasharray="4"/>
+            <text x="250" y="195" font-size="9" fill="var(--danger)" text-anchor="middle" font-weight="600">⚠ Zona crítica (10 incidentes)</text>
+
+            <!-- BLOQUE 01 -->
+            <rect x="40" y="60" width="110" height="80" rx="8"
+              fill="var(--accent)" opacity=".18" stroke="var(--accent)" stroke-width="1.5"/>
+            <text x="95" y="85" font-size="12" text-anchor="middle" font-weight="700"
+              fill="var(--accent)" font-family="'Space Grotesk',sans-serif">Bloque 01</text>
+            <text x="95" y="100" font-size="10" text-anchor="middle" fill="var(--fg-muted)">Imperial</text>
+            <text x="95" y="114" font-size="10" text-anchor="middle" fill="var(--fg-subtle)">8.5 ha · Agroimpe</text>
+            <text x="95" y="127" font-size="9" text-anchor="middle" fill="var(--accent)">Fase 1</text>
+            <!-- línea al canal -->
+            <line x1="95" y1="140" x2="110" y2="162" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3"/>
+
+            <!-- BLOQUE 02 -->
+            <rect x="170" y="30" width="130" height="100" rx="8"
+              fill="#0E7490" opacity=".15" stroke="#0E7490" stroke-width="1.5"/>
+            <text x="235" y="58" font-size="12" text-anchor="middle" font-weight="700"
+              fill="#0E7490" font-family="'Space Grotesk',sans-serif">Bloque 02</text>
+            <text x="235" y="73" font-size="10" text-anchor="middle" fill="var(--fg-muted)">Mina Pumpurre</text>
+            <text x="235" y="88" font-size="10" text-anchor="middle" fill="var(--fg-subtle)">193 ha · 3 asoc.</text>
+            <text x="235" y="102" font-size="9" text-anchor="middle" fill="#0E7490">Fase 1 — Pilot</text>
+            <text x="235" y="116" font-size="9" text-anchor="middle" fill="var(--gold)">🌍 USA + Alemania</text>
+            <line x1="235" y1="130" x2="235" y2="160" stroke="#0E7490" stroke-width="1" stroke-dasharray="3"/>
+
+            <!-- BLOQUE 04 -->
+            <rect x="315" y="195" width="135" height="100" rx="8"
+              fill="var(--danger)" opacity=".12" stroke="var(--danger)" stroke-width="1.5"/>
+            <text x="383" y="222" font-size="12" text-anchor="middle" font-weight="700"
+              fill="var(--danger)" font-family="'Space Grotesk',sans-serif">Bloque 04</text>
+            <text x="383" y="237" font-size="10" text-anchor="middle" fill="var(--fg-muted)">Tunape / Las Norias</text>
+            <text x="383" y="252" font-size="10" text-anchor="middle" fill="var(--fg-subtle)">95 ha · 3 asoc.</text>
+            <text x="383" y="267" font-size="9" text-anchor="middle" fill="var(--danger)">Fase 2 — Protocolo esp.</text>
+            <text x="383" y="282" font-size="9" text-anchor="middle" fill="var(--gold)">🌍 Europa</text>
+            <line x1="340" y1="195" x2="295" y2="175" stroke="var(--danger)" stroke-width="1" stroke-dasharray="3"/>
+
+            <!-- BLOQUE 09 -->
+            <rect x="520" y="195" width="135" height="100" rx="8"
+              fill="var(--gold)" opacity=".15" stroke="var(--gold)" stroke-width="1.5"/>
+            <text x="588" y="222" font-size="12" text-anchor="middle" font-weight="700"
+              fill="var(--gold)" font-family="'Space Grotesk',sans-serif">Bloque 09</text>
+            <text x="588" y="237" font-size="10" text-anchor="middle" fill="var(--fg-muted)">La Juliana</text>
+            <text x="588" y="252" font-size="10" text-anchor="middle" fill="var(--fg-subtle)">17 ha · Asoc. La Juliana</text>
+            <text x="588" y="267" font-size="9" text-anchor="middle" fill="var(--gold)">Fase 3</text>
+            <text x="588" y="282" font-size="9" text-anchor="middle" fill="var(--gold)">🌍 Europa (Asprorra)</text>
+            <line x1="555" y1="195" x2="535" y2="168" stroke="var(--gold)" stroke-width="1" stroke-dasharray="3"/>
+
+            <!-- H2Olmos label -->
+            <text x="650" y="310" font-size="9" fill="var(--fg-subtle)" text-anchor="end">Concesionaria H2Olmos · PEOT</text>
+            <text x="650" y="322" font-size="9" fill="var(--fg-subtle)" text-anchor="end">ALA Olmos · Contacto: Shay Araldo</text>
+
+            <!-- escala indicativa -->
+            <line x1="30" y1="320" x2="80" y2="320" stroke="var(--fg-subtle)" stroke-width="1.5"/>
+            <line x1="30" y1="315" x2="30" y2="325" stroke="var(--fg-subtle)" stroke-width="1.5"/>
+            <line x1="80" y1="315" x2="80" y2="325" stroke="var(--fg-subtle)" stroke-width="1.5"/>
+            <text x="55" y="332" font-size="8" text-anchor="middle" fill="var(--fg-subtle)">~5 km (referencial)</text>
+
+            <!-- Norte -->
+            <text x="665" y="30" font-size="22" text-anchor="middle" fill="var(--fg-muted)">↑</text>
+            <text x="665" y="44" font-size="10" text-anchor="middle" fill="var(--fg-subtle)">N</text>
+          </svg>
+        </div>
+        <div class="map-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:var(--accent)"></span>Bloque 01 — Imperial (Fase 1)</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#0E7490"></span>Bloque 02 — Mina Pumpurre (Fase 1)</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--danger)"></span>Bloque 04 — Tunape/Las Norias (Fase 2 · zona crítica)</span>
+          <span class="legend-item"><span class="legend-dot" style="background:var(--gold)"></span>Bloque 09 — La Juliana (Fase 3)</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#2563EB"></span>Canal principal H2Olmos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de incidentes -->
+    <h3 style="font-family:var(--font-head);font-size:15px;font-weight:600;margin-top:40px;margin-bottom:8px;">Registro oficial de sustracciones clandestinas — Bloque 04</h3>
+    <p style="font-size:13px;color:var(--fg-muted);margin-bottom:12px;">Expedientes LS_R_AGUA 001-2023 al 010-2024 · Área RSE/O&M · H2Olmos · ALA Olmos</p>
+    <div class="incident-wrap">
+      <table class="incident-table">
+        <thead>
+          <tr>
+            <th>Expediente</th><th>Fecha</th><th>Ubicación</th><th>Responsable</th><th>Área ALA</th><th>Estado</th><th>Observaciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>LS_R_AGUA 001-2023</td><td>Abr 2023</td><td>KM 10+100</td><td>Fiorella Carpio</td><td>Shay Araldo / H2Olmos</td><td><span class="status-pill s-closed">Cerrado</span></td><td>Manguera clandestina. Primera inspección; acta levantada.</td></tr>
+          <tr><td>LS_R_AGUA 002-2023</td><td>Abr 2023</td><td>KM 11+150</td><td>Fiorella Carpio</td><td>Shay Araldo / H2Olmos</td><td><span class="status-pill s-closed">Cerrado</span></td><td>Segunda conexión clandestina en Margen Izquierda.</td></tr>
+          <tr><td>LS_R_AGUA 003-2024</td><td>Ene 2024</td><td>KM 11+150</td><td>Oscar Morana</td><td>Shay Araldo / H2Olmos</td><td><span class="status-pill s-proc">En proceso</span></td><td>Reincidencia — Margen Derecha. Comunicación formal al ALA.</td></tr>
+          <tr><td>LS_R_AGUA 004-2024</td><td>Feb 2024</td><td>KM 4+145</td><td>Oscar Morana</td><td>Shay Araldo / H2Olmos</td><td><span class="status-pill s-proc">En proceso</span></td><td>Toma clandestina Margen Derecha. Visita de verificación realizada.</td></tr>
+          <tr><td>LS_R_AGUA 005-2024</td><td>Feb 2024</td><td>Embalse Palo Verde</td><td>Jorge Roque / SSTMA</td><td>Walter Calderón / ALA</td><td><span class="status-pill s-closed">Cerrado</span></td><td>15 de abril — Retiro de tubería y sellado de pozos.</td></tr>
+          <tr><td>LS_R_AGUA 006-2024</td><td>Feb 2024</td><td>KM 3+120</td><td>Enrique Guzmán</td><td>Shay Araldo / H2Olmos</td><td><span class="status-pill s-open">Abierto</span></td><td>Manguera en Margen Izquierda. Expediente derivado a ALA para sanción.</td></tr>
+          <tr><td>LS_R_AGUA 007-2024</td><td>Mar 2024</td><td>KM 4+250</td><td>Enrique Guzmán</td><td>Shay Araldo / H2Olmos</td><td><span class="status-pill s-open">Abierto</span></td><td>Reincidencia. Extracción nocturna documentada con cámara.</td></tr>
+          <tr><td>LS_R_AGUA 008-2024</td><td>Mar 2024</td><td>KM 3+120</td><td>Enrique Guzmán</td><td>Shay Araldo / H2Olmos</td><td><span class="status-pill s-open">Abierto</span></td><td>Tercera incidencia mismo actor. Expediente acumulativo.</td></tr>
+          <tr><td>LS_R_AGUA 009-2024</td><td>Mar 2024</td><td>KM 4+150</td><td>Oscar Morana</td><td>Shay Araldo / H2Olmos</td><td><span class="status-pill s-open">Abierto</span></td><td>Cuarta incidencia — solicitud de constatación fiscal emitida.</td></tr>
+          <tr><td>LS_R_AGUA 010-2024</td><td>Mar 2024</td><td>KM 4+150</td><td>Oscar Morana</td><td>Shay Araldo / H2Olmos</td><td><span class="status-pill s-open">Abierto</span></td><td>Quinta incidencia acumulada. Punto KM 4+150 identificado como crítico.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:11px;color:var(--fg-subtle);margin-top:8px;">Fuente: Registro interno H2Olmos / Área RSE y O&M · ALA Olmos 2023–2024. 4 expedientes abiertos al momento del levantamiento.</p>
+  </div>
+</section>
+
+<!-- C. ARQUITECTURA TECNOLÓGICA -->
+<section id="arquitectura">
+  <div class="inner">
+    <div class="section-eyebrow">C · Arquitectura Tecnológica</div>
+    <h2 class="section-title">Del sensor al bloque: flujo de datos</h2>
+    <p class="section-lead">Cómo la información viaja desde el suelo hasta la cadena de bloques, y cómo la IA convierte esos datos en decisiones de riego.</p>
+
+    <div class="arch-flow">
+      <div class="arch-layers" role="list">
+        <div class="arch-node" role="listitem">
+          <div class="arch-icon">🌱</div>
+          <div class="arch-node-title">Campo IoT</div>
+          <div class="arch-node-desc">Sensores humedad, caudal, presión y estación meteo</div>
+        </div>
+        <div class="arch-node" role="listitem">
+          <div class="arch-icon" style="background:#7C3AED">📡</div>
+          <div class="arch-node-title">LoRaWAN</div>
+          <div class="arch-node-desc">Gateway por bloque · 10–15 km sin 4G</div>
+        </div>
+        <div class="arch-node" role="listitem">
+          <div class="arch-icon teal">🖥</div>
+          <div class="arch-node-title">Servidor local</div>
+          <div class="arch-node-desc">Buffer offline + timestamp verificable</div>
+        </div>
+        <div class="arch-node" role="listitem">
+          <div class="arch-icon" style="background:#0E7490">🤖</div>
+          <div class="arch-node-title">IA / Big Data</div>
+          <div class="arch-node-desc">Random Forest + Gradient Boosting · ET₀ Penman-Monteith</div>
+        </div>
+        <div class="arch-node" role="listitem">
+          <div class="arch-icon green2">🔗</div>
+          <div class="arch-node-title">Blockchain</div>
+          <div class="arch-node-desc">Hyperledger Fabric v2.x · 3 nodos validadores</div>
+        </div>
+        <div class="arch-node" role="listitem">
+          <div class="arch-icon gold">📱</div>
+          <div class="arch-node-title">App Productor</div>
+          <div class="arch-node-desc">Consulta dotación · alertas SMS · PDF certificado</div>
+        </div>
+      </div>
+
+      <div class="arch-detail">
+        <div class="arch-detail-card">
+          <h4>🌱 Nodos de campo</h4>
+          <ul>
+            <li>TEROS 12 / equiv. LoRaWAN</li>
+            <li>Caudal electromagnético en tomas</li>
+            <li>Estación meteo 1 por bloque</li>
+            <li>Solar + batería · 2–5 años</li>
+            <li>4 gateways (1 por bloque activo)</li>
+          </ul>
+        </div>
+        <div class="arch-detail-card" style="border-left-color:#7C3AED">
+          <h4>🤖 Capa de inteligencia</h4>
+          <ul>
+            <li>Fases 1–2: reglas agronómicas (umbral ET₀)</li>
+            <li>Fase 2+: modelo supervisado con historial</li>
+            <li>LSTM para series largas (año 2+)</li>
+            <li>Alertas automáticas riego/exceso</li>
+          </ul>
+        </div>
+        <div class="arch-detail-card" style="border-left-color:#065F46">
+          <h4>🔗 Red Hyperledger</h4>
+          <ul>
+            <li>Nodos: PEOT · H2Olmos · Banol</li>
+            <li>Sin criptomoneda ni gas fees</li>
+            <li>Offline sync garantizado</li>
+            <li>Certificado de dotación por lote</li>
+            <li>ALA como auditor de lectura</li>
+          </ul>
+        </div>
+        <div class="arch-detail-card" style="border-left-color:var(--gold)">
+          <h4>📱 Acceso productor</h4>
+          <ul>
+            <li>App para smartphones de baja gama</li>
+            <li>Dotación histórica propia</li>
+            <li>Comparación con parcela vecina</li>
+            <li>PDF certificado para exportador</li>
+            <li>11 representantes · acceso gratuito</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- D. ECONOMÍA CIRCULAR -->
+<section id="economia">
+  <div class="inner">
+    <div class="section-eyebrow">D · Estrategia de Economía Circular</div>
+    <h2 class="section-title">Ciclo de vida del hardware: de la instalación al reciclaje</h2>
+    <p class="section-lead">Ningún sensor termina en un basural informal. El proyecto aplica trazabilidad blockchain también a su propio hardware.</p>
+
+    <div class="eco-grid">
+      <div class="eco-cycle">
+        <div class="eco-stages">
+          <div class="eco-stage">
+            <div class="eco-dot">🏭</div>
+            <div class="eco-stage-body">
+              <h4>1. Adquisición y despliegue</h4>
+              <p>Sensores LoRaWAN, gateways y estaciones meteo instalados por bloque. Número de serie y fecha de instalación registrados en blockchain como acto verificable.</p>
+            </div>
+          </div>
+          <div class="eco-stage">
+            <div class="eco-dot">⚡</div>
+            <div class="eco-stage-body">
+              <h4>2. Operación (5–10 años)</h4>
+              <p>Alimentación solar autónoma. Paneles recargables evitan residuos de pilas. Mantenimiento preventivo programado en la plataforma con historial trazado.</p>
+            </div>
+          </div>
+          <div class="eco-stage">
+            <div class="eco-dot">🔧</div>
+            <div class="eco-stage-body">
+              <h4>3. Reacondicionamiento (si &gt;70% vida útil)</h4>
+              <p>Componentes funcionales reacondicionados por proveedores locales (región Lambayeque) para reutilización en otras parcelas. Certificado de reuso en Fabric.</p>
+            </div>
+          </div>
+          <div class="eco-stage">
+            <div class="eco-dot">♻️</div>
+            <div class="eco-stage-body">
+              <h4>4. Reciclaje certificado RAEE</h4>
+              <p>Gestores con certificación <strong>R2v3</strong> o <strong>e-Stewards</strong>. Cumple D.S. 001-2012-MINAM y Ley 28611. Recuperación de Au, Cu, Ag, Al y plásticos técnicos.</p>
+            </div>
+          </div>
+          <div class="eco-stage">
+            <div class="eco-dot">🔗</div>
+            <div class="eco-stage-body">
+              <h4>5. Certificado de trazabilidad final</h4>
+              <p>Registro inmutable del destino de cada equipo en la cadena de bloques. Garantía de que ningún dispositivo termina en vertedero informal.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="eco-side">
+        <div class="eco-metric">
+          <div class="eco-metric-num">−80%</div>
+          <div class="eco-metric-label">Reducción en disposición de RAEE vs. ciclo convencional<br><em style="font-size:11px;color:var(--fg-subtle)">Remanufactura −30% + minería urbana −50%</em></div>
+        </div>
+        <div class="eco-metric">
+          <div class="eco-metric-num gold">5–10</div>
+          <div class="eco-metric-label">Años de vida útil por nodo<br><em style="font-size:11px;color:var(--fg-subtle)">Con energía solar y mantenimiento preventivo</em></div>
+        </div>
+        <div class="eco-cert">
+          <span class="eco-cert-icon">🏅</span>
+          <div>
+            <strong>Certificación R2v3 / e-Stewards</strong>
+            <p>Estándares internacionales para recicladores electrónicos responsables. Requeridos por el proyecto para cualquier gestor de RAEE contratado.</p>
+          </div>
+        </div>
+        <div class="eco-cert" style="background:var(--gold-lo);">
+          <span class="eco-cert-icon">📋</span>
+          <div>
+            <strong>Marco legal peruano</strong>
+            <p>D.S. 001-2012-MINAM · Ley 28611 (Ley General del Ambiente). La plataforma blockchain provee el registro notarial digital de disposición final.</p>
+          </div>
+        </div>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:16px;">
+          <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--fg);margin-bottom:10px;">Priorización de proveedores locales</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--fg-muted)">Logística de retiro</span>
+              <span class="tag">Lambayeque</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--fg-muted)">Remanufactura</span>
+              <span class="tag">Lambayeque</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--fg-muted)">Reciclaje RAEE</span>
+              <span class="tag gold">Certificado nacional</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- E. REFERENCIAS APA 7 -->
+<section id="referencias">
+  <div class="inner">
+    <div class="section-eyebrow">E · Referencias</div>
+    <h2 class="section-title">Fuentes de datos y manuales técnicos</h2>
+    <p class="section-lead">Normas APA, 7.ª edición. Las referencias institucionales incluyen documentos de campo levantados durante 2023–2024.</p>
+
+    <div class="ref-list">
+      <div class="ref-item">Autoridad Nacional del Agua – ANA. (2023). <em>Reglamento de Operadores de Infraestructura Hidráulica.</em> Ministerio de Desarrollo Agrario y Riego – MIDAGRI.</div>
+      <div class="ref-item">Basel Action Network. (2022). <em>e-Stewards Standard version 3.0: Requirements for responsible electronics recycling.</em> BAN. <a href="https://e-stewards.org" target="_blank" rel="noopener">https://e-stewards.org</a></div>
+      <div class="ref-item">Chen, D., Reissman, M., & Shen, Y. (2022). LoRaWAN in agriculture: A survey of IoT applications for precision irrigation. <em>Computers and Electronics in Agriculture, 198,</em> 107–118. <a href="https://doi.org/10.1016/j.compag.2022.107118" target="_blank" rel="noopener">https://doi.org/10.1016/j.compag.2022.107118</a></div>
+      <div class="ref-item">H2Olmos. (2024). <em>Registros de gestión de incidentes hídricos — Bloque 04 Valle Viejo (Expedientes LS_R_AGUA 001-2023 al 010-2024).</em> Proyecto Especial Olmos Tinajones.</div>
+      <div class="ref-item">Hyperledger Foundation. (2024). <em>Hyperledger Fabric documentation v2.5.</em> Linux Foundation. <a href="https://hyperledger-fabric.readthedocs.io" target="_blank" rel="noopener">https://hyperledger-fabric.readthedocs.io</a></div>
+      <div class="ref-item">Ministerio del Ambiente del Perú – MINAM. (2012). <em>Decreto Supremo N.º 001-2012-MINAM: Reglamento Nacional para la Gestión y Manejo de los Residuos de Aparatos Eléctricos y Electrónicos.</em> El Peruano.</div>
+      <div class="ref-item">Proyecto Especial Olmos Tinajones – PEOT. (2024). <em>Levantamiento de asociaciones de productores de banano orgánico — Valle Viejo de Olmos (Bloques 01, 02, 04, 09).</em> Informe de campo, noviembre 2024.</div>
+      <div class="ref-item">Proyecto Especial Olmos Tinajones – PEOT. (2023). <em>Informe de gestión hídrica del Valle Viejo de Olmos.</em> Gobierno Regional de Lambayeque.</div>
+      <div class="ref-item">R2 Solutions. (2023). <em>Responsible Recycling (R2v3) Standard for Electronics Refurbishers and Recyclers.</em> R2 Solutions. <a href="https://sustainableelectronics.org/r2" target="_blank" rel="noopener">https://sustainableelectronics.org/r2</a></div>
+      <div class="ref-item">Upreti, A., & Bhavsar, P. (2023). Blockchain for water management: Transparency, traceability and smart contracts in irrigation systems. <em>Journal of Hydrology, 617,</em> 128–142. <a href="https://doi.org/10.1016/j.jhydrol.2022.128142" target="_blank" rel="noopener">https://doi.org/10.1016/j.jhydrol.2022.128142</a></div>
+      <div class="ref-item">Vásquez Calle, J. C. (2026). <em>Informe técnico: Optimización del riego en banano orgánico con IA, IoT y Blockchain — Irrigación Olmos, Valle Viejo (Versión 3.0).</em> Documento de trabajo.</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <strong>Valle Viejo de Olmos · Riego Inteligente</strong> · Portafolio Digital Ejecutivo · Julio César Vásquez Calle · Noviembre 2026<br>
+  <span style="opacity:.6;margin-top:4px;display:block">PEOT · H2Olmos · Cooperativa Banol · 8 asociaciones · 313.5 ha · 4 mercados de exportación</span>
+</footer>
+
+<script>
+// Smooth scroll a sección
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Resaltar nav activo
+const sections = ['hero','diagnostico','arquitectura','economia','referencias'];
+const btns = document.querySelectorAll('.nav-links button');
+function updateNav() {
+  let current = 'hero';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && window.scrollY >= el.offsetTop - 80) current = id;
+  });
+  btns.forEach((b, i) => b.classList.toggle('active', sections[i] === current));
+}
+window.addEventListener('scroll', updateNav, { passive: true });
+updateNav();
+
+// Toggle tema
+const root = document.documentElement;
+const themeBtn = document.getElementById('themeBtn');
+let theme = (() => { try { return localStorage.getItem('olmos-theme') || 'system'; } catch(e) { return 'system'; } })();
+function applyTheme(t) {
+  if (t === 'dark') { root.setAttribute('data-theme','dark'); themeBtn.textContent = '☀️'; }
+  else if (t === 'light') { root.setAttribute('data-theme','light'); themeBtn.textContent = '🌙'; }
+  else { root.removeAttribute('data-theme'); themeBtn.textContent = '🌓'; }
+}
+applyTheme(theme);
+themeBtn.addEventListener('click', () => {
+  theme = theme === 'system' ? 'dark' : theme === 'dark' ? 'light' : 'system';
+  applyTheme(theme);
+  try { localStorage.setItem('olmos-theme', theme); } catch(e) {}
+});
+</script>
+
+</body></html>
